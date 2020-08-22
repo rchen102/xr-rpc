@@ -29,4 +29,9 @@ public class DemoServerTest {
     public void TestServiceBeanMap() {
         assertEquals(2, rpcServer.getServiceBeanMap().size());
     }
+
+    @Test
+    public void run() {
+        rpcServer.startService();
+    }
 }
