@@ -17,13 +17,14 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <fastjson.version>1.2.62</fastjson.version>
         <junit.version>4.12</junit.version>
         <lombok.version>1.18.12</lombok.version>
         <slf4j.version>1.7.21</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <spring.version>4.2.0.RELEASE</spring.version>
         <netty.version>4.1.0.Final</netty.version>
+        <fastjson.version>1.2.62</fastjson.version>
+        <protostuff.version>1.0.9</protostuff.version>
     </properties>
 
     <dependencies>
@@ -77,6 +78,23 @@
             <artifactId>netty-all</artifactId>
             <version>${netty.version}</version>
         </dependency>
+        <!-- fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+        <!-- Protostuff -->
+        <dependency>
+            <groupId>com.dyuproject.protostuff</groupId>
+            <artifactId>protostuff-core</artifactId>
+            <version>${protostuff.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dyuproject.protostuff</groupId>
+            <artifactId>protostuff-runtime</artifactId>
+            <version>${protostuff.version}</version>
+        </dependency>
         <!-- junit -->
         <dependency>
             <groupId>junit</groupId>
@@ -84,7 +102,6 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
