@@ -1,0 +1,27 @@
+out/
+*.class
+
+#package
+*.war
+*.ear
+
+#maven
+target/
+
+#idea
+.idea/
+/idea/
+*.ipr
+*.iml
+*.iws
+
+#tmp file
+*.log
+*.cache
+*.diff
+*.patch
+*.tmp
+
+#system
+.DS_STORE
+Thumbs.db
