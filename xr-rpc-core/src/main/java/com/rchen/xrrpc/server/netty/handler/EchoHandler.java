@@ -13,6 +13,7 @@ public class EchoHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         // 读取数据后写回客户端
         ctx.write(msg);
+        System.out.println("[Received]");
     }
 
     @Override

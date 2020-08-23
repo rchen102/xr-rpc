@@ -27,7 +27,6 @@ public class RpcProxy implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         String serviceAddress = serviceDiscovery.discover("");
         transportClient = ClientManager.getInstance().getClient(serviceAddress);
-        transportClient.send("Test");
         return null;
     }
 }

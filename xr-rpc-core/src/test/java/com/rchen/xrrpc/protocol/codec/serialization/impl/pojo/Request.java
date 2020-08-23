@@ -1,4 +1,4 @@
-package com.rchen.xrrpc.codec.serialization.impl.pojo;
+package com.rchen.xrrpc.protocol.codec.serialization.impl.pojo;
 
 import lombok.Data;
 

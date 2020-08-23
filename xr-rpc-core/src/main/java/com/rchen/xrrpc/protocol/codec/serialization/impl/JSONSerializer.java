@@ -1,8 +1,8 @@
-package com.rchen.xrrpc.codec.serialization.impl;
+package com.rchen.xrrpc.protocol.codec.serialization.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.rchen.xrrpc.codec.serialization.Serializer;
-import com.rchen.xrrpc.codec.serialization.SerializerAlgorithm;
+import com.rchen.xrrpc.protocol.codec.serialization.Serializer;
+import com.rchen.xrrpc.protocol.Protocol;
 
 /**
  * @Author : crz
@@ -10,8 +10,8 @@ import com.rchen.xrrpc.codec.serialization.SerializerAlgorithm;
  */
 public class JSONSerializer implements Serializer {
     @Override
-    public byte getSerializerAlgorithm() {
-        return SerializerAlgorithm.JSON;
+    public Byte getSerializerAlgorithm() {
+        return Protocol.SerializerAlgorithm.JSON;
     }
 
     @Override

@@ -1,4 +1,6 @@
-package com.rchen.xrrpc.codec.serialization;
+package com.rchen.xrrpc.protocol.codec.serialization;
+
+import com.rchen.xrrpc.protocol.codec.serialization.impl.JSONSerializer;
 
 /**
  * 序列化/反序列接口
@@ -7,11 +9,17 @@ package com.rchen.xrrpc.codec.serialization;
  * @Date: 2020/8/22
  */
 public interface Serializer {
+
+    /**
+     * 默认使用 JSON 序列化
+     */
+    Serializer DEFAULT = new JSONSerializer();
+
     /**
      * 获取序列化算法 id
      * @return
      */
-    byte getSerializerAlgorithm();
+    Byte getSerializerAlgorithm();
 
     /**
      * 对象序列化为字节流

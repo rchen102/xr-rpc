@@ -9,7 +9,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @Author : crz
  * @Date: 2020/8/23
  */
-public class Driver {
+public class DemoClient {
     public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext("spring-client.xml");
         RpcClient rpcClient = context.getBean(RpcClient.class);

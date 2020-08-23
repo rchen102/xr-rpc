@@ -1,10 +1,10 @@
-package com.rchen.xrrpc.codec.serialization.impl;
+package com.rchen.xrrpc.protocol.codec.serialization.impl;
 
-import com.rchen.xrrpc.codec.serialization.Serializer;
-import com.rchen.xrrpc.codec.serialization.SerializerAlgorithm;
-import com.rchen.xrrpc.codec.serialization.impl.pojo.Pearson;
-import com.rchen.xrrpc.codec.serialization.impl.pojo.Request;
-import com.rchen.xrrpc.codec.serialization.impl.pojo.Student;
+import com.rchen.xrrpc.protocol.Protocol;
+import com.rchen.xrrpc.protocol.codec.serialization.Serializer;
+import com.rchen.xrrpc.protocol.codec.serialization.impl.pojo.Pearson;
+import com.rchen.xrrpc.protocol.codec.serialization.impl.pojo.Request;
+import com.rchen.xrrpc.protocol.codec.serialization.impl.pojo.Student;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -41,7 +41,7 @@ public class ProtobufSerializerTest {
 
     @Test
     public void getSerializerAlgorithm() {
-        assertEquals(SerializerAlgorithm.PROTOBUF, serializer.getSerializerAlgorithm());
+        assertEquals(Protocol.SerializerAlgorithm.PROTOBUF, serializer.getSerializerAlgorithm());
     }
 
     @Test

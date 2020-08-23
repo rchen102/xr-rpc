@@ -1,11 +1,11 @@
-package com.rchen.xrrpc.codec.serialization.impl;
+package com.rchen.xrrpc.protocol.codec.serialization.impl;
 
 import com.dyuproject.protostuff.LinkedBuffer;
 import com.dyuproject.protostuff.ProtostuffIOUtil;
 import com.dyuproject.protostuff.Schema;
 import com.dyuproject.protostuff.runtime.RuntimeSchema;
-import com.rchen.xrrpc.codec.serialization.Serializer;
-import com.rchen.xrrpc.codec.serialization.SerializerAlgorithm;
+import com.rchen.xrrpc.protocol.Protocol;
+import com.rchen.xrrpc.protocol.codec.serialization.Serializer;
 import org.springframework.objenesis.Objenesis;
 import org.springframework.objenesis.ObjenesisStd;
 
@@ -30,8 +30,8 @@ public class ProtobufSerializer implements Serializer {
     private static Objenesis objenesis = new ObjenesisStd(true);
 
     @Override
-    public byte getSerializerAlgorithm() {
-        return SerializerAlgorithm.PROTOBUF;
+    public Byte getSerializerAlgorithm() {
+        return Protocol.SerializerAlgorithm.PROTOBUF;
     }
 
     @Override
@@ -68,6 +68,4 @@ public class ProtobufSerializer implements Serializer {
         }
         return schema;
     }
-
-
 }
