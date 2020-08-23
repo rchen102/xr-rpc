@@ -10,7 +10,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import lombok.AllArgsConstructor;
 
 import java.util.Date;
 import java.util.Map;
@@ -19,12 +18,17 @@ import java.util.Map;
  * @Author : crz
  * @Date: 2020/8/22
  */
-@AllArgsConstructor
 public class NettyServer implements TransportServer {
 
     private String ip;
     private int port;
     private Map<String, Object> serviceBeanMap;
+
+    public NettyServer(String ip, int port, Map<String, Object> serviceBeanMap) {
+        this.ip = ip;
+        this.port = port;
+        this.serviceBeanMap = serviceBeanMap;
+    }
 
     public void start() {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -36,6 +40,7 @@ public class NettyServer implements TransportServer {
                     .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG, 1024)
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
+                    .childOption(ChannelOption.TCP_NODELAY, true)
                     .childHandler(new ChannelInitializer<NioSocketChannel>() {
                         @Override
                         protected void initChannel(NioSocketChannel ch) throws Exception {
