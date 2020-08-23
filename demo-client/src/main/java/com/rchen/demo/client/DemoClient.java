@@ -14,8 +14,7 @@ public class DemoClient {
         ApplicationContext context = new ClassPathXmlApplicationContext("spring-client.xml");
         RpcClient rpcClient = context.getBean(RpcClient.class);
 
-        HelloService helloService = rpcClient.createProxy(HelloService.class, false);
+        HelloService helloService = rpcClient.createProxy(HelloService.class, "1.0", false);
         helloService.sayHello();
-
     }
 }

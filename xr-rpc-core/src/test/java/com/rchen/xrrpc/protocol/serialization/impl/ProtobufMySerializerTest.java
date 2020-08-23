@@ -1,10 +1,10 @@
-package com.rchen.xrrpc.protocol.codec.serialization.impl;
+package com.rchen.xrrpc.protocol.serialization.impl;
 
 import com.rchen.xrrpc.protocol.Protocol;
-import com.rchen.xrrpc.protocol.codec.serialization.Serializer;
-import com.rchen.xrrpc.protocol.codec.serialization.impl.pojo.Pearson;
-import com.rchen.xrrpc.protocol.codec.serialization.impl.pojo.Request;
-import com.rchen.xrrpc.protocol.codec.serialization.impl.pojo.Student;
+import com.rchen.xrrpc.protocol.serialization.Serializer;
+import com.rchen.xrrpc.protocol.serialization.impl.pojo.Pearson;
+import com.rchen.xrrpc.protocol.serialization.impl.pojo.Request;
+import com.rchen.xrrpc.protocol.serialization.impl.pojo.Student;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertNotNull;
  * @Author : crz
  * @Date: 2020/8/22
  */
-public class ProtobufSerializerTest {
+public class ProtobufMySerializerTest {
 
     static Serializer serializer;
     static Request request;

@@ -25,15 +25,15 @@ public class RpcClient {
      * @param <T>
      * @return
      */
-    public <T> T createProxy(Class<T> serviceAPI, boolean isAsync) {
+    public <T> T createProxy(Class<T> serviceAPI, String version, boolean isAsync) {
         if (!isAsync) {
             return (T) Proxy.newProxyInstance(
                     serviceAPI.getClassLoader(),
                     new Class<?>[]{serviceAPI},
-                    new RpcProxy(serviceDiscovery)
+                    new RpcProxy(serviceDiscovery, version)
             );
         }
-        return createAsyncProxy(serviceAPI);
+        return createAsyncProxy(serviceAPI, version);
     }
 
     /**
@@ -42,7 +42,7 @@ public class RpcClient {
      * @param <T>
      * @return
      */
-    private <T> T createAsyncProxy(Class<T> serviceAPI) {
+    private <T> T createAsyncProxy(Class<T> serviceAPI, String version) {
         return null;
     }
 

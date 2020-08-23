@@ -1,6 +1,6 @@
-package com.rchen.xrrpc.protocol.codec.serialization;
+package com.rchen.xrrpc.protocol.serialization;
 
-import com.rchen.xrrpc.protocol.codec.serialization.impl.JSONSerializer;
+import com.rchen.xrrpc.protocol.serialization.impl.JSONSerializer;
 
 /**
  * 序列化/反序列接口

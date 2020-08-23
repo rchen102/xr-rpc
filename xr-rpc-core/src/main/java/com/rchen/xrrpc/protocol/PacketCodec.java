@@ -1,12 +1,10 @@
-package com.rchen.xrrpc.protocol.codec;
+package com.rchen.xrrpc.protocol;
 
-import com.rchen.xrrpc.protocol.Packet;
-import com.rchen.xrrpc.protocol.Protocol;
 import com.rchen.xrrpc.protocol.Protocol.Command;
 import com.rchen.xrrpc.protocol.Protocol.SerializerAlgorithm;
-import com.rchen.xrrpc.protocol.codec.serialization.Serializer;
-import com.rchen.xrrpc.protocol.codec.serialization.impl.JSONSerializer;
-import com.rchen.xrrpc.protocol.codec.serialization.impl.ProtobufSerializer;
+import com.rchen.xrrpc.protocol.serialization.Serializer;
+import com.rchen.xrrpc.protocol.serialization.impl.JSONSerializer;
+import com.rchen.xrrpc.protocol.serialization.impl.ProtobufSerializer;
 import com.rchen.xrrpc.protocol.request.RpcRequest;
 import com.rchen.xrrpc.protocol.request.VerifyRequest;
 import com.rchen.xrrpc.protocol.response.RpcResponse;
@@ -26,7 +24,7 @@ public class PacketCodec {
     /**
      * 单例模式
      */
-    private static final PacketCodec INSTANCE = new PacketCodec();
+    public static final PacketCodec INSTANCE = new PacketCodec();
 
     private final Map<Byte, Class<? extends Packet>> packetTypeMap;
 

@@ -1,7 +1,12 @@
 package com.rchen.xrrpc.client.netty;
 
+import com.rchen.xrrpc.client.RpcFuture;
+import com.rchen.xrrpc.client.TestThread;
 import com.rchen.xrrpc.client.TransportClient;
-import com.rchen.xrrpc.client.netty.handler.FirstClientHandler;
+import com.rchen.xrrpc.client.netty.handler.RpcResponseHandler;
+import com.rchen.xrrpc.codec.PacketDecoder;
+import com.rchen.xrrpc.codec.PacketEncoder;
+import com.rchen.xrrpc.protocol.Packet;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -46,7 +51,9 @@ public class NettyClient implements TransportClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(new FirstClientHandler());
+                        ch.pipeline().addLast(new PacketDecoder());
+                        ch.pipeline().addLast(new RpcResponseHandler());
+                        ch.pipeline().addLast(new PacketEncoder());
                     }
                 });
 
@@ -63,6 +70,7 @@ public class NettyClient implements TransportClient {
             if (future.isSuccess()) {
                 System.out.println(new Date() + ": 服务[" + ip + ":" + port + "]连接成功!");
                 channel = ((ChannelFuture) future).channel();
+                new Thread(new TestThread(channel)).start();
             } else if (retry == 0) {
                 System.err.println("重试次数已用完，放弃连接！");
             } else {
@@ -75,5 +83,11 @@ public class NettyClient implements TransportClient {
                         .SECONDS);
             }
         });
+    }
+
+    @Override
+    public RpcFuture sendRequest(Packet request) {
+        channel.writeAndFlush(request);
+        return null;
     }
 }

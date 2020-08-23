@@ -1,11 +1,11 @@
-package com.rchen.xrrpc.protocol.codec.serialization.impl;
+package com.rchen.xrrpc.protocol.serialization.impl;
 
 import com.dyuproject.protostuff.LinkedBuffer;
 import com.dyuproject.protostuff.ProtostuffIOUtil;
 import com.dyuproject.protostuff.Schema;
 import com.dyuproject.protostuff.runtime.RuntimeSchema;
 import com.rchen.xrrpc.protocol.Protocol;
-import com.rchen.xrrpc.protocol.codec.serialization.Serializer;
+import com.rchen.xrrpc.protocol.serialization.Serializer;
 import org.springframework.objenesis.Objenesis;
 import org.springframework.objenesis.ObjenesisStd;
 

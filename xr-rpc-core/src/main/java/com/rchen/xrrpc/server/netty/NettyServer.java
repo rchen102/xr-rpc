@@ -1,7 +1,9 @@
 package com.rchen.xrrpc.server.netty;
 
+import com.rchen.xrrpc.codec.PacketDecoder;
+import com.rchen.xrrpc.codec.PacketEncoder;
 import com.rchen.xrrpc.server.TransportServer;
-import com.rchen.xrrpc.server.netty.handler.EchoHandler;
+import com.rchen.xrrpc.server.netty.handler.RpcRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -44,7 +46,9 @@ public class NettyServer implements TransportServer {
                     .childHandler(new ChannelInitializer<NioSocketChannel>() {
                         @Override
                         protected void initChannel(NioSocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new EchoHandler());
+                            ch.pipeline().addLast(new PacketDecoder());
+                            ch.pipeline().addLast(new RpcRequestHandler());
+                            ch.pipeline().addLast(new PacketEncoder());
                         }
                     });
             // 启动 RPC Netty 服务器

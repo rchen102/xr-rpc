@@ -1,4 +1,4 @@
-package com.rchen.xrrpc.protocol.codec.serialization.impl.pojo;
+package com.rchen.xrrpc.protocol.serialization.impl.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +9,6 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class Student {
-    private int age;
+public class Pearson {
+    private String name;
 }
