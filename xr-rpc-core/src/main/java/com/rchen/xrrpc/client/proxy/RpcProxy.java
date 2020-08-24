@@ -30,7 +30,7 @@ public class RpcProxy implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         RpcRequest rpcRequest = RpcRequest.builder()
-                .requestId("00767193")
+                .requestId("000001")
                 .serviceName(method.getDeclaringClass().getName() + "-" + serviceVersion)
                 .methodName(method.getName())
                 .paramsType(method.getParameterTypes())
@@ -39,6 +39,7 @@ public class RpcProxy implements InvocationHandler {
 
         String serviceAddress = serviceDiscovery.discover("");
         transportClient = ClientManager.getInstance().getClient(serviceAddress);
+        transportClient.sendRequest(rpcRequest);
         return null;
     }
 }
