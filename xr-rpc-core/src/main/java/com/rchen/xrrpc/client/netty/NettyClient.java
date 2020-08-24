@@ -6,6 +6,7 @@ import com.rchen.xrrpc.client.TransportClient;
 import com.rchen.xrrpc.client.netty.handler.RpcResponseHandler;
 import com.rchen.xrrpc.codec.PacketDecoder;
 import com.rchen.xrrpc.codec.PacketEncoder;
+import com.rchen.xrrpc.protocol.Spliter;
 import com.rchen.xrrpc.protocol.request.RpcRequest;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -71,6 +72,7 @@ public class NettyClient implements TransportClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
+                        ch.pipeline().addLast(new Spliter());
                         ch.pipeline().addLast(new PacketDecoder());
                         ch.pipeline().addLast(new RpcResponseHandler(pending));
                         ch.pipeline().addLast(new PacketEncoder());

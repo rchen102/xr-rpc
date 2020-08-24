@@ -67,6 +67,7 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         log.error("连接出现错误：" + ctx.channel().remoteAddress() + " | " + cause.getMessage());
+        cause.printStackTrace();
         ctx.close();
     }
 }

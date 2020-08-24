@@ -10,6 +10,16 @@ package com.rchen.xrrpc.protocol;
  */
 public interface Protocol {
 
+    /**
+     * 数据包长度位的偏移是 7 bytes
+     */
+    int LENGTH_FIELD_OFFSET = 7;
+
+    /**
+     * 数据包长度位需要占据 4 bytes
+     */
+    int LENGTH_FIELD_LENGTH = 4;
+
     int MAGIC_NUMBER = 0x12345678;
 
     Byte version = 1;
