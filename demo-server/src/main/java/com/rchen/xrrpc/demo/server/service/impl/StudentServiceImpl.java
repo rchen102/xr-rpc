@@ -24,9 +24,10 @@ public class StudentServiceImpl implements StudentService {
 
     public StudentServiceImpl() {
         collegeMap = new HashMap<>();
-        collegeMap.put("B0076", "Computer Science");
+        collegeMap.put("0076", "Computer Science");
+
         studentMap = new HashMap<>();
-        studentMap.put("B0076", new Student("B0076", "rchen"));
+        studentMap.put("0076", new Student("0076", "rchen"));
     }
 
     @Override

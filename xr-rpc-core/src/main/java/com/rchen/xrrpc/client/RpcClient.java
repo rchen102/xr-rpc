@@ -1,5 +1,6 @@
 package com.rchen.xrrpc.client;
 
+import com.rchen.xrrpc.client.proxy.AsyncRpcProxy;
 import com.rchen.xrrpc.client.proxy.RpcProxy;
 import com.rchen.xrrpc.registry.ServiceDiscovery;
 import lombok.AllArgsConstructor;
@@ -25,15 +26,12 @@ public class RpcClient {
      * @param <T>
      * @return
      */
-    public <T> T createProxy(Class<T> serviceAPI, String version, boolean isAsync) {
-        if (!isAsync) {
-            return (T) Proxy.newProxyInstance(
-                    serviceAPI.getClassLoader(),
-                    new Class<?>[]{serviceAPI},
-                    new RpcProxy(serviceDiscovery, version)
-            );
-        }
-        return createAsyncProxy(serviceAPI, version);
+    public <T> T createProxy(Class<T> serviceAPI, String version) {
+        return (T) Proxy.newProxyInstance(
+                serviceAPI.getClassLoader(),
+                new Class<?>[]{serviceAPI},
+                new RpcProxy(serviceDiscovery, version)
+        );
     }
 
     /**
@@ -42,8 +40,8 @@ public class RpcClient {
      * @param <T>
      * @return
      */
-    private <T> T createAsyncProxy(Class<T> serviceAPI, String version) {
-        return null;
+    public <T> AsyncRpcProxy createAsyncProxy(Class<T> serviceAPI, String version) {
+        return new AsyncRpcProxy<T>(serviceDiscovery, serviceAPI, version);
     }
 
 }

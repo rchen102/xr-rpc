@@ -1,6 +1,6 @@
 package com.rchen.xrrpc.protocol.serialization;
 
-import com.rchen.xrrpc.protocol.serialization.impl.JSONSerializer;
+import com.rchen.xrrpc.protocol.serialization.impl.ProtobufSerializer;
 
 /**
  * 序列化/反序列接口
@@ -11,9 +11,9 @@ import com.rchen.xrrpc.protocol.serialization.impl.JSONSerializer;
 public interface Serializer {
 
     /**
-     * 默认使用 JSON 序列化
+     * 默认使用 Protobuf 序列化
      */
-    Serializer DEFAULT = new JSONSerializer();
+    Serializer DEFAULT = new ProtobufSerializer();
 
     /**
      * 获取序列化算法 id

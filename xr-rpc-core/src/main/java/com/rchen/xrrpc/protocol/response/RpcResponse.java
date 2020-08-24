@@ -14,7 +14,6 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class RpcResponse extends Packet {
-
     /**
      * RPC request id，唯一标识
      */
@@ -27,5 +26,9 @@ public class RpcResponse extends Packet {
     @Override
     public Byte getCommand() {
         return Command.RPC_RESPONSE;
+    }
+
+    public boolean isSuccess() {
+        return exception == null;
     }
 }

@@ -36,12 +36,13 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
         // 扫描获取所有 @RpcService 标注的服务真实实现类 <BeanName, Bean>
         Map<String, Object> serviceImplMap = ctx.getBeansWithAnnotation(RpcService.class);
 
-        // 创建 serviceBeanMap，<key: serviceName + version，value: serviceBean>
+        // 创建 serviceBeanMap，<key=(serviceName + "-" + version), value=serviceBean>
         for (Object serviceBean : serviceImplMap.values()) {
             RpcService rpcService = serviceBean.getClass().getAnnotation(RpcService.class);
             String serviceName = rpcService.value().getName() + "-" + rpcService.version();
             this.serviceBeanMap.put(serviceName, serviceBean);
         }
+        log.debug("服务器扫描服务结束，服务数量：" + serviceBeanMap.size());
     }
 
     @Override

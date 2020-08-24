@@ -14,11 +14,11 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class RpcRequest extends Packet {
-
     /**
      * RPC request id，唯一标识
      */
     private String requestId;
+
     /**
      * interface name + version
      */
@@ -39,9 +39,12 @@ public class RpcRequest extends Packet {
      */
     private Object[] params;
 
-
     @Override
     public Byte getCommand() {
         return Command.RPC_REQUEST;
+    }
+
+    public RpcRequest() {
+
     }
 }

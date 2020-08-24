@@ -1,8 +1,8 @@
 package com.rchen.xrrpc.protocol.serialization.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.rchen.xrrpc.protocol.serialization.Serializer;
 import com.rchen.xrrpc.protocol.Protocol;
+import com.rchen.xrrpc.protocol.serialization.Serializer;
 
 /**
  * @Author : crz

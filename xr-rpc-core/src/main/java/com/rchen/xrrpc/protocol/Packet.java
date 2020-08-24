@@ -10,11 +10,11 @@ import lombok.Data;
  */
 @Data
 public abstract class Packet {
-
     /**
      * 协议版本
      */
     private Byte version = Protocol.version;
+
 
     /**
      * 该数据包中的指令类型

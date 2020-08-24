@@ -23,6 +23,7 @@ public class JSONMySerializerTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
+
         serializer = new JSONSerializer();
         request = new Request();
 

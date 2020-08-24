@@ -12,14 +12,15 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.Date;
 import java.util.Map;
 
 /**
  * @Author : crz
  * @Date: 2020/8/22
  */
+@Slf4j
 public class NettyServer implements TransportServer {
 
     private String ip;
@@ -47,16 +48,16 @@ public class NettyServer implements TransportServer {
                         @Override
                         protected void initChannel(NioSocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new PacketDecoder());
-                            ch.pipeline().addLast(new RpcRequestHandler());
+                            ch.pipeline().addLast(new RpcRequestHandler(serviceBeanMap));
                             ch.pipeline().addLast(new PacketEncoder());
                         }
                     });
             // 启动 RPC Netty 服务器
             ChannelFuture f = bootstrap.bind(ip, port).sync().addListener(future -> {
                 if (future.isSuccess()) {
-                    System.out.println(new Date() + ": 地址[" + ip + ":" + port + "]绑定成功!");
+                    log.info("地址 [{}:{}] 绑定成功!", ip, port);
                 } else {
-                    System.err.println("端口[" + port + "]绑定失败!");
+                    log.error("端口 [{}] 绑定失败!", port);
                 }
             });
             // TODO 服务注册

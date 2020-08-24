@@ -13,4 +13,9 @@ public class HelloServiceImpl implements HelloService {
     public String sayHello() {
         return "Hello, World!";
     }
+
+    @Override
+    public String sayHello(String msg) {
+        return msg;
+    }
 }

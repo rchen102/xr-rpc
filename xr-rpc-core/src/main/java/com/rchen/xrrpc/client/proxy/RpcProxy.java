@@ -1,9 +1,11 @@
 package com.rchen.xrrpc.client.proxy;
 
 import com.rchen.xrrpc.client.ClientManager;
+import com.rchen.xrrpc.client.RpcFuture;
 import com.rchen.xrrpc.client.TransportClient;
 import com.rchen.xrrpc.protocol.request.RpcRequest;
 import com.rchen.xrrpc.registry.ServiceDiscovery;
+import com.rchen.xrrpc.util.IdUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationHandler;
@@ -30,7 +32,7 @@ public class RpcProxy implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         RpcRequest rpcRequest = RpcRequest.builder()
-                .requestId("000001")
+                .requestId(String.valueOf(IdUtil.nextId()))
                 .serviceName(method.getDeclaringClass().getName() + "-" + serviceVersion)
                 .methodName(method.getName())
                 .paramsType(method.getParameterTypes())
@@ -39,7 +41,11 @@ public class RpcProxy implements InvocationHandler {
 
         String serviceAddress = serviceDiscovery.discover("");
         transportClient = ClientManager.getInstance().getClient(serviceAddress);
-        transportClient.sendRequest(rpcRequest);
+        if (transportClient != null) {
+            RpcFuture rpcFuture = transportClient.sendRequest(rpcRequest);
+            return rpcFuture.get();
+        }
+        log.error("错误：获取可用的服务端连接失败");
         return null;
     }
 }
