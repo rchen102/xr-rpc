@@ -23,8 +23,6 @@ public class RpcResponseHandler extends SimpleChannelInboundHandler<RpcResponse>
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, RpcResponse rpcResponse) throws Exception {
-        log.info("收到服务端 RPC 执行结果");
-        log.debug("具体结果: {}", rpcResponse.toString());
         String requestId = rpcResponse.getRequestId();
         RpcFuture rpcFuture = pending.get(requestId);
         if (rpcFuture != null) {

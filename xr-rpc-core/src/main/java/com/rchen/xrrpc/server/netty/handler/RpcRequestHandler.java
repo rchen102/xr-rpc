@@ -25,7 +25,7 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcRequest rpcRequest) throws Exception {
-        log.info("收到客户端 RPC 请求，开始处理...");
+        log.info("收到 RPC 请求[id={}]，开始处理...", rpcRequest.getRequestId());
         log.debug("具体请求: {}", rpcRequest.toString());
         RpcResponse rpcResponse;
         // 1. 解析 RpcRequest
@@ -53,8 +53,8 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
                         .exception(null)
                         .result(result)
                         .build();
-            } catch (NoSuchMethodException ex) {
-                log.error("RPC 服务 {} 不存在方法 {}", serviceName, methodName);
+            } catch (Exception ex) {
+                log.error("RPC 请求[id={}] <{} - {}> 执行出现错误", requestId, serviceName, methodName);
                 rpcResponse = RpcResponse.builder()
                         .requestId(requestId)
                         .exception(ex)
@@ -69,7 +69,6 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         log.error("连接出现错误：" + ctx.channel().remoteAddress() + " | " + cause.getMessage());
-        cause.printStackTrace();
         ctx.close();
     }
 }

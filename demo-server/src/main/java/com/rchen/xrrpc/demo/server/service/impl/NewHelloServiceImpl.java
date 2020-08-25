@@ -11,6 +11,7 @@ import com.rchen.xrrpc.demo.api.service.HelloService;
 public class NewHelloServiceImpl implements HelloService {
     @Override
     public String sayHello() {
+        int error = 1/0;
         return "Hi!";
     }
 

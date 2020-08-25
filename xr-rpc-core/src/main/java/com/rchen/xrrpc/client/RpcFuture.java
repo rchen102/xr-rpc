@@ -1,5 +1,6 @@
 package com.rchen.xrrpc.client;
 
+import com.rchen.xrrpc.exception.RpcFailureException;
 import com.rchen.xrrpc.protocol.response.RpcResponse;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,18 +43,21 @@ public class RpcFuture implements Future<Object> {
     }
 
     public void done(RpcResponse res) {
+        long useTime = System.currentTimeMillis() - startTime;
+        log.info("RPC 请求[id={}] 执行完成，共计耗时 [{} ms]", res.getRequestId(), useTime);
+        log.debug("具体结果: {}", res.toString());
+
         response = res;
         countDownLatch.countDown();
+
+        // 异步调用处理
         if (callback != null) {
             if (response.isSuccess()) {
                 callback.success(response.getResult());
             } else {
-                // TODO 自定义调用失败的 Exception
                 callback.fail(response.getException());
             }
         }
-        long useTime = System.currentTimeMillis() - startTime;
-        log.info("Request[id={}] is done, use time [{} ms]", response.getRequestId(), useTime);
     }
 
     @Override
@@ -74,7 +78,17 @@ public class RpcFuture implements Future<Object> {
     @Override
     public Object get() throws InterruptedException, ExecutionException {
         countDownLatch.await();
-        return response.getResult();
+        if (response.isSuccess()) {
+            /**
+             * 调用成功
+             */
+            return response.getResult();
+        } else {
+            /**
+             * 调用失败
+             */
+            throw new RpcFailureException(response.getException());
+        }
     }
 
     @Override

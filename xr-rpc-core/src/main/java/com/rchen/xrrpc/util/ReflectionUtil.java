@@ -2,7 +2,6 @@ package com.rchen.xrrpc.util;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -44,19 +43,11 @@ public class ReflectionUtil {
     public static Object invokeMethod  (Object serviceBean,
                                         String methodName,
                                         Class<?>[] parameterTypes,
-                                        Object[] parameters) throws NoSuchMethodException {
+                                        Object[] parameters) throws Exception {
         //TODO cglib 优化Java原生反射的低效率
         Class<?> serviceClass = serviceBean.getClass();
         Method method = serviceClass.getMethod(methodName, parameterTypes);
         method.setAccessible(true);
-
-        try {
-            return method.invoke(serviceBean, parameters);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return method.invoke(serviceBean, parameters);
     }
 }

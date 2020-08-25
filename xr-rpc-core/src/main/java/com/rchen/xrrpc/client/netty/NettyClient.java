@@ -104,10 +104,11 @@ public class NettyClient implements TransportClient {
      * @param retry 剩余重连次数
      */
     private void connect(Bootstrap bootstrap, int retry) {
+        log.info("开始与服务端 [{}:{}] 建立新连接...", ip, port);
         try {
             bootstrap.connect(ip, port).addListener(future -> {
                 if (future.isSuccess()) {
-                    log.info("与服务端 [{}:{}] 建立新连接成功！", ip, port);
+                    log.info("连接 [{}:{}] 建立成功！", ip, port);
                     channel = ((ChannelFuture) future).channel();
                     /**
                      * 连接建立后取消主线程阻塞
@@ -135,6 +136,7 @@ public class NettyClient implements TransportClient {
         if (channel != null) {
             RpcFuture rpcFuture = new RpcFuture(request.getRequestId());
             pending.put(request.getRequestId(), rpcFuture);
+            log.info("RPC 同步请求[id={}] 已发送", request.getRequestId());
             channel.writeAndFlush(request);
             return rpcFuture;
         }
@@ -147,6 +149,7 @@ public class NettyClient implements TransportClient {
         if (channel != null) {
             RpcFuture rpcFuture = new RpcFuture(request.getRequestId(), callback);
             pending.put(request.getRequestId(), rpcFuture);
+            log.info("RPC 异步请求[id={}] 已发送", request.getRequestId());
             channel.writeAndFlush(request);
             return rpcFuture;
         }
