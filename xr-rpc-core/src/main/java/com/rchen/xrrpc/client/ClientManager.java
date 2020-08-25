@@ -50,10 +50,25 @@ public class ClientManager {
             client = clientCache.get(serviceAddress);
             if (client == null) {
                 client = new NettyClient(ip, port);
-                clientCache.put(serviceAddress, client);
+                if (client.isRunning()) {
+                    clientCache.put(serviceAddress, client);
+                }
+                else {
+                    /**
+                     * 身份验证失败，关闭连接
+                     */
+                    client.close();
+                    client = null;
+                }
             }
         }
-        //TODO 判断该 client 是否可用，可能已经出现错误，pdf P135
         return client;
+    }
+
+    public void close() {
+        for (TransportClient client : clientCache.values()) {
+            client.close();
+        }
+        clientCache.clear();
     }
 }

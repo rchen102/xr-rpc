@@ -12,4 +12,8 @@
         <constructor-arg name="serviceAddress" value="${rpc.service_address}"/>
     </bean>
 
+    <bean id="serverConfig" class="com.rchen.xrrpc.config.ServerConfig" >
+        <property name="verifyCode" value="${rpc.verification_code}" />
+    </bean>
+
 </beans>

@@ -23,14 +23,15 @@ public class RpcResponseHandler extends SimpleChannelInboundHandler<RpcResponse>
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, RpcResponse rpcResponse) throws Exception {
-        log.debug("收到服务端消息：{}", rpcResponse.toString());
+        log.info("收到服务端 RPC 执行结果");
+        log.debug("具体结果: {}", rpcResponse.toString());
         String requestId = rpcResponse.getRequestId();
         RpcFuture rpcFuture = pending.get(requestId);
         if (rpcFuture != null) {
             pending.remove(rpcFuture);
             rpcFuture.done(rpcResponse);
         } else {
-            log.error("收到回复[id={}]，但是 Future 不存在", requestId);
+            log.error("收到 RPC 请求回复[id={}]，但是 Future 不存在", requestId);
         }
     }
 }

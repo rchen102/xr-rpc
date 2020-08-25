@@ -31,21 +31,22 @@ public class RpcProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        String serviceName = method.getDeclaringClass().getName() + "-" + serviceVersion;
         RpcRequest rpcRequest = RpcRequest.builder()
                 .requestId(String.valueOf(IdUtil.nextId()))
-                .serviceName(method.getDeclaringClass().getName() + "-" + serviceVersion)
+                .serviceName(serviceName)
                 .methodName(method.getName())
                 .paramsType(method.getParameterTypes())
                 .params(args)
                 .build();
 
-        String serviceAddress = serviceDiscovery.discover("");
+        String serviceAddress = serviceDiscovery.discover(serviceName);
         transportClient = ClientManager.getInstance().getClient(serviceAddress);
         if (transportClient != null) {
             RpcFuture rpcFuture = transportClient.sendRequest(rpcRequest);
             return rpcFuture.get();
         }
-        log.error("错误：获取可用的服务端连接失败");
+        log.error("获取服务[{}]可用连接失败");
         return null;
     }
 }

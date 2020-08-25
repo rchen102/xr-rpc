@@ -1,9 +1,12 @@
 package com.rchen.xrrpc.protocol;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import lombok.extern.slf4j.Slf4j;
+
+import java.nio.charset.Charset;
 
 /**
  * Packet 分割，解决拆包和粘包问题
@@ -34,7 +37,11 @@ public class Spliter extends LengthFieldBasedFrameDecoder {
         // 屏蔽非本协议的客户端
         if (in.getInt(in.readerIndex()) != Protocol.MAGIC_NUMBER) {
             log.error("收到不符合协议数据包，关闭连接...");
-            ctx.channel().close();
+            ByteBuf buffer = ctx.alloc().buffer();
+            byte[] bytes = "协议校验失败，连接即将关闭...".getBytes(Charset.forName("utf-8"));
+            buffer.writeBytes(bytes);
+            ctx.channel().writeAndFlush(buffer)
+                    .addListener(ChannelFutureListener.CLOSE);
             return null;
         }
         return super.decode(ctx, in);

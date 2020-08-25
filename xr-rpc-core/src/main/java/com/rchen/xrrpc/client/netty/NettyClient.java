@@ -4,6 +4,7 @@ import com.rchen.xrrpc.client.AsyncRpcCallback;
 import com.rchen.xrrpc.client.RpcFuture;
 import com.rchen.xrrpc.client.TransportClient;
 import com.rchen.xrrpc.client.netty.handler.RpcResponseHandler;
+import com.rchen.xrrpc.client.netty.handler.VerifyResponseHandler;
 import com.rchen.xrrpc.codec.PacketDecoder;
 import com.rchen.xrrpc.codec.PacketEncoder;
 import com.rchen.xrrpc.protocol.Spliter;
@@ -16,6 +17,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -28,10 +30,12 @@ import java.util.concurrent.TimeUnit;
  * @Date: 2020/8/22
  */
 @Slf4j
+@Data
 public class NettyClient implements TransportClient {
-
+    /**
+     * 配置参数
+     */
     private static final int MAX_RETRY = 5;
-
     private String ip;
     private int port;
 
@@ -39,6 +43,7 @@ public class NettyClient implements TransportClient {
      * 连接建立后的 channel
      */
     private Channel channel;
+    private NioEventLoopGroup workerGroup;
 
     /**
      * 尚未收到回复的 Request 的 Future
@@ -50,11 +55,12 @@ public class NettyClient implements TransportClient {
      * 用于确保连接在 RPC 调用前先建立
      */
     private CountDownLatch countDownLatch;
+    private boolean isRunning;
 
     public NettyClient(String ip, int port) {
         this.ip = ip;
         this.port = port;
-        countDownLatch = new CountDownLatch(1);
+        countDownLatch = new CountDownLatch(2);
         this.establishConnection();
     }
 
@@ -62,7 +68,7 @@ public class NettyClient implements TransportClient {
      * 与服务端建立连接
      */
     private void establishConnection() {
-        NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup();
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(workerGroup)
                 .channel(NioSocketChannel.class)
@@ -74,12 +80,18 @@ public class NettyClient implements TransportClient {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast(new Spliter());
                         ch.pipeline().addLast(new PacketDecoder());
+                        ch.pipeline().addLast(new VerifyResponseHandler(NettyClient.this));
                         ch.pipeline().addLast(new RpcResponseHandler(pending));
                         ch.pipeline().addLast(new PacketEncoder());
                     }
                 });
         connect(bootstrap, MAX_RETRY);
         try {
+            /**
+             * 主线程阻塞，等待条件：
+             *  1. 连接建立完成
+             *  2. 身份验证结果
+             */
             countDownLatch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -95,7 +107,7 @@ public class NettyClient implements TransportClient {
         try {
             bootstrap.connect(ip, port).addListener(future -> {
                 if (future.isSuccess()) {
-                    log.info("服务端 [{}:{}] 连接成功!", ip, port);
+                    log.info("与服务端 [{}:{}] 建立新连接成功！", ip, port);
                     channel = ((ChannelFuture) future).channel();
                     /**
                      * 连接建立后取消主线程阻塞
@@ -126,7 +138,7 @@ public class NettyClient implements TransportClient {
             channel.writeAndFlush(request);
             return rpcFuture;
         }
-        log.error("sendRequest(): 服务端连接未建立");
+        log.error("服务端连接尚未建立！");
         return null;
     }
 
@@ -138,7 +150,18 @@ public class NettyClient implements TransportClient {
             channel.writeAndFlush(request);
             return rpcFuture;
         }
-        log.error("sendAsyncRequest(): 服务端连接未建立");
+        log.error("服务端连接尚未建立！");
         return null;
+    }
+
+    @Override
+    public void close() {
+        workerGroup.shutdownGracefully().addListener(future -> {
+            if (future.isSuccess()) {
+                log.info("与服务端 [{}:{}] 的一条连接断开！", ip, port);
+            } else {
+                log.error("与服务端 [{}:{}] 的一条连接断开失败！", ip, port);
+            }
+        });
     }
 }

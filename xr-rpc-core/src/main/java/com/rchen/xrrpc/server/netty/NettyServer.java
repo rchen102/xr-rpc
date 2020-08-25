@@ -4,7 +4,9 @@ import com.rchen.xrrpc.codec.PacketDecoder;
 import com.rchen.xrrpc.codec.PacketEncoder;
 import com.rchen.xrrpc.protocol.Spliter;
 import com.rchen.xrrpc.server.TransportServer;
+import com.rchen.xrrpc.server.netty.handler.AuthHandler;
 import com.rchen.xrrpc.server.netty.handler.RpcRequestHandler;
+import com.rchen.xrrpc.server.netty.handler.VerifyRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -50,6 +52,8 @@ public class NettyServer implements TransportServer {
                         protected void initChannel(NioSocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new Spliter());
                             ch.pipeline().addLast(new PacketDecoder());
+                            ch.pipeline().addLast(new VerifyRequestHandler());
+                            ch.pipeline().addLast(new AuthHandler());
                             ch.pipeline().addLast(new RpcRequestHandler(serviceBeanMap));
                             ch.pipeline().addLast(new PacketEncoder());
                         }

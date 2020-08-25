@@ -25,7 +25,8 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcRequest rpcRequest) throws Exception {
-        log.debug("收到客户端消息：{}", rpcRequest.toString());
+        log.info("收到客户端 RPC 请求，开始处理...");
+        log.debug("具体请求: {}", rpcRequest.toString());
         RpcResponse rpcResponse;
         // 1. 解析 RpcRequest
         String requestId = rpcRequest.getRequestId();
@@ -61,6 +62,7 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
                         .build();
             }
         }
+        log.info("RPC 请求[id={}]处理完毕，发送执行结果", requestId);
         ctx.channel().writeAndFlush(rpcResponse);
     }
 

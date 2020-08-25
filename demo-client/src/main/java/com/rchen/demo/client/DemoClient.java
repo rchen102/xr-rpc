@@ -1,9 +1,7 @@
 package com.rchen.demo.client;
 
 import com.rchen.xrrpc.client.RpcClient;
-import com.rchen.xrrpc.demo.api.entity.Student;
 import com.rchen.xrrpc.demo.api.service.HelloService;
-import com.rchen.xrrpc.demo.api.service.StudentService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -22,8 +20,10 @@ public class DemoClient {
         HelloService helloService2 = rpcClient.createProxy(HelloService.class, "2.0");
         System.out.println("结果： " + helloService2.sayHello());
 
-        StudentService studentService = rpcClient.createProxy(StudentService.class, "1.0");
-        System.out.println("结果： " + studentService.findById("0076"));
-        System.out.println("结果： " + studentService.getCollege(new Student("0076", "rchen")));
+        rpcClient.close();
+//
+//        StudentService studentService = rpcClient.createProxy(StudentService.class, "1.0");
+//        System.out.println("结果： " + studentService.findById("0076"));
+//        System.out.println("结果： " + studentService.getCollege(new Student("0076", "rchen")));
     }
 }

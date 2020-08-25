@@ -44,4 +44,9 @@ public class RpcClient {
         return new AsyncRpcProxy<T>(serviceDiscovery, serviceAPI, version);
     }
 
+    public void close() {
+        log.info("RPC 客户端准备关闭...");
+        ClientManager.getInstance().close();
+    }
+
 }

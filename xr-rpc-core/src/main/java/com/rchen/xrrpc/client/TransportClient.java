@@ -9,4 +9,6 @@ import com.rchen.xrrpc.protocol.request.RpcRequest;
 public interface TransportClient {
     RpcFuture sendRequest(RpcRequest request);
     RpcFuture sendAsyncRequest(RpcRequest request, AsyncRpcCallback callback);
+    boolean isRunning();
+    void close();
 }
