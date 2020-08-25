@@ -16,8 +16,8 @@ public class ZookeeperServiceRegistry implements ServiceRegistry {
      */
     private final ZkClient zkClient;
 
-    public ZookeeperServiceRegistry(String zkAdress) {
-        zkClient = new ZkClient(zkAdress,
+    public ZookeeperServiceRegistry(String zkAddress) {
+        zkClient = new ZkClient(zkAddress,
                 ZookeeperConfig.ZK_SESSION_TIMEOUT,
                 ZookeeperConfig.ZK_CONNECTION_TIMEOUT);
         log.debug("连接 Zookeeper");
@@ -38,9 +38,9 @@ public class ZookeeperServiceRegistry implements ServiceRegistry {
             log.debug("创建 service 节点: {}", servicePath);
         }
         // 创建 serviceAddress 节点（临时节点）
-        String addressPath = servicePath + "/" + serviceAddress;
+        String addressPath = servicePath + "/address-";
         if (!zkClient.exists(addressPath)) {
-            zkClient.createEphemeral(addressPath);
+            zkClient.createEphemeralSequential(addressPath, serviceAddress);
             log.debug("创建 address 节点: {}", addressPath);
         }
     }

@@ -6,8 +6,8 @@
 
     <context:property-placeholder location="classpath:rpc.properties"/>
 
-    <bean id="serviceDiscovery" class="com.rchen.xrrpc.registry.impl.DummyDiscovery">
-        <constructor-arg name="zkAddress" value="${rpc.zookeeper_address}"/>
+    <bean id="serviceDiscovery" class="com.rchen.xrrpc.registry.impl.ZookeeperServiceDiscovery">
+        <constructor-arg name="zkAddress" value="${rpc.discovery_address}"/>
     </bean>
 
     <bean id="rpcClient" class="com.rchen.xrrpc.client.RpcClient">
