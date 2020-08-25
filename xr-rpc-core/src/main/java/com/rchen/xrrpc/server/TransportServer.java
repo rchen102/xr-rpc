@@ -7,5 +7,5 @@ package com.rchen.xrrpc.server;
  * @Date: 2020/8/22
  */
 public interface TransportServer {
-    void start();
+    void start(RpcServer server);
 }

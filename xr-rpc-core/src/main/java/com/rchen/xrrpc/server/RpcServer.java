@@ -1,6 +1,7 @@
 package com.rchen.xrrpc.server;
 
 import com.rchen.xrrpc.annotation.RpcService;
+import com.rchen.xrrpc.registry.ServiceRegistry;
 import com.rchen.xrrpc.server.netty.NettyServer;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,12 +24,18 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
      */
     private String serviceAddress;
 
+    /**
+     * 服务注册
+     */
+    private ServiceRegistry serviceRegistry;
+
     private TransportServer transportServer;
 
     private Map<String, Object> serviceBeanMap = new HashMap<>();
 
-    public RpcServer(String serviceAddress) {
+    public RpcServer(String serviceAddress, ServiceRegistry serviceRegistry) {
         this.serviceAddress = serviceAddress;
+        this.serviceRegistry = serviceRegistry;
     }
 
     @Override
@@ -55,6 +62,13 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
     }
 
     public void startService() {
-        transportServer.start();
+        transportServer.start(this);
+    }
+
+    public void registerService() {
+        for (String serviceName : serviceBeanMap.keySet()) {
+            serviceRegistry.register(serviceName, serviceAddress);
+            log.info("注册服务 服务[{}] -> 地址[{}]", serviceName, serviceAddress);
+        }
     }
 }

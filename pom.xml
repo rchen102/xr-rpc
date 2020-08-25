@@ -23,6 +23,8 @@
         <logback.version>1.2.3</logback.version>
         <spring.version>4.2.0.RELEASE</spring.version>
         <netty.version>4.1.0.Final</netty.version>
+        <zookeeper.version>3.4.6</zookeeper.version>
+        <zkclient.version>0.4</zkclient.version>
         <fastjson.version>1.2.62</fastjson.version>
         <protostuff.version>1.0.9</protostuff.version>
     </properties>
@@ -77,6 +79,17 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>${netty.version}</version>
+        </dependency>
+        <!-- Zookeeper -->
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>${zookeeper.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.101tec</groupId>
+            <artifactId>zkclient</artifactId>
+            <version>${zkclient.version}</version>
         </dependency>
         <!-- fastjson -->
         <dependency>

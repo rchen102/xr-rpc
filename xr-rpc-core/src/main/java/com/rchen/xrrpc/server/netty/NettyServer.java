@@ -3,6 +3,7 @@ package com.rchen.xrrpc.server.netty;
 import com.rchen.xrrpc.codec.PacketDecoder;
 import com.rchen.xrrpc.codec.PacketEncoder;
 import com.rchen.xrrpc.protocol.Spliter;
+import com.rchen.xrrpc.server.RpcServer;
 import com.rchen.xrrpc.server.TransportServer;
 import com.rchen.xrrpc.server.netty.handler.AuthHandler;
 import com.rchen.xrrpc.server.netty.handler.RpcRequestHandler;
@@ -36,7 +37,8 @@ public class NettyServer implements TransportServer {
         this.serviceBeanMap = serviceBeanMap;
     }
 
-    public void start() {
+    @Override
+    public void start(RpcServer server) {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -62,6 +64,8 @@ public class NettyServer implements TransportServer {
             ChannelFuture f = bootstrap.bind(ip, port).sync().addListener(future -> {
                 if (future.isSuccess()) {
                     log.info("地址 [{}:{}] 绑定成功!", ip, port);
+                    log.info("开始服务注册...");
+                    server.registerService();
                 } else {
                     log.error("端口 [{}] 绑定失败!", port);
                 }
