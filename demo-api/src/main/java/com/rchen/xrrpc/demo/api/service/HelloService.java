@@ -2,5 +2,6 @@ package com.rchen.xrrpc.demo.api.service;
 
 public interface HelloService {
     String sayHello();
-    String sayHello(String msg);
+    String sayHelloLater();
+    String echo(String msg);
 }

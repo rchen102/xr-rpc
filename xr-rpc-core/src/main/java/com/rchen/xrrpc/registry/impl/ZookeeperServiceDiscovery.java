@@ -17,11 +17,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class ZookeeperServiceDiscovery implements ServiceDiscovery {
 
-    private final ZkClient zkClient;
+    private ZkClient zkClient;
+
+    private String zkAddress;
 
     private Map<String, List<String>> serviceAddressMap = new ConcurrentHashMap<>();
 
     public ZookeeperServiceDiscovery(String zkAddress) {
+        this.zkAddress = zkAddress;
+        startZkClient();
+    }
+
+    private void startZkClient() {
         log.debug("连接 Zookeeper");
         zkClient = new ZkClient(zkAddress,
                 ZookeeperConfig.ZK_SESSION_TIMEOUT,
@@ -35,6 +42,7 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery {
      */
     @Override
     public List<String> discover(String serviceName) {
+        if (zkClient == null) startZkClient();
         List<String> serviceAddressList = new ArrayList<>();
         // 1. 获取 service 节点
         String servicePath = ZookeeperConfig.ZK_REGISTRY_PATH + "/" + serviceName;
@@ -62,6 +70,7 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery {
         if (zkClient != null) {
             zkClient.close();
         }
+        zkClient = null;
         log.info("与服务发现中心连接断开!");
     }
 }

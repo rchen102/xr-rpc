@@ -2,6 +2,7 @@ package com.rchen.xrrpc.client.proxy;
 
 import com.rchen.xrrpc.client.TransportClient;
 import com.rchen.xrrpc.client.manage.ClientUtil;
+import com.rchen.xrrpc.config.ClientConfig;
 import com.rchen.xrrpc.protocol.request.RpcRequest;
 import com.rchen.xrrpc.registry.ServiceDiscovery;
 import com.rchen.xrrpc.util.IdUtil;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author : crz
@@ -44,7 +46,7 @@ public class RpcProxy implements InvocationHandler {
                     .params(args)
                     .build();
             RpcFuture rpcFuture = transportClient.sendRequest(rpcRequest);
-            return rpcFuture.get();
+            return rpcFuture.get(ClientConfig.RPC_MAX_TIMEOUT, TimeUnit.MILLISECONDS);
         }
         log.error("无法获得服务 [{}] 的一个可用连接，调用失败!", serviceName);
         return null;

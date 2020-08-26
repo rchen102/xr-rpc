@@ -1,14 +1,13 @@
 package com.rchen.xrrpc.client.proxy;
 
 import com.rchen.xrrpc.exception.RpcFailureException;
+import com.rchen.xrrpc.exception.RpcTimeoutException;
 import com.rchen.xrrpc.protocol.response.RpcResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * @Author : crz
@@ -49,15 +48,6 @@ public class RpcFuture implements Future<Object> {
 
         response = res;
         countDownLatch.countDown();
-
-        // 异步回调
-        if (callback != null) {
-            if (response.isSuccess()) {
-                callback.success(response.getResult());
-            } else {
-                callback.fail(response.getException());
-            }
-        }
     }
 
     @Override
@@ -76,7 +66,7 @@ public class RpcFuture implements Future<Object> {
     }
 
     @Override
-    public Object get() throws InterruptedException, ExecutionException {
+    public Object get() throws InterruptedException {
         countDownLatch.await();
         if (response.isSuccess()) {
             /**
@@ -92,7 +82,32 @@ public class RpcFuture implements Future<Object> {
     }
 
     @Override
-    public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        return null;
+    public Object get(long timeout, TimeUnit unit) {
+        boolean awaitSuccess = false;
+        try {
+            awaitSuccess = countDownLatch.await(timeout, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (!awaitSuccess) {
+            log.error("服务器未响应，请稍后再试!");
+            throw new RpcTimeoutException("服务器未响应，请稍后再试!");
+        }
+        if (callback != null) { // 异步调用
+            if (response.isSuccess()) {
+                callback.success(response.getResult());
+            } else {
+                callback.fail(response.getException());
+            }
+            return null;
+        }
+        else { // 同步调用
+            if (response.isSuccess()) {
+                return response.getResult();
+            } else {
+                log.error("RPC 调用失败!");
+                throw new RpcFailureException(response.getException().getCause());
+            }
+        }
     }
 }

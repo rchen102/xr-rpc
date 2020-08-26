@@ -16,7 +16,17 @@ public class NewHelloServiceImpl implements HelloService {
     }
 
     @Override
-    public String sayHello(String msg) {
+    public String sayHelloLater() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return "Wait!";
+    }
+
+    @Override
+    public String echo(String msg) {
         return "New: " + msg;
     }
 }

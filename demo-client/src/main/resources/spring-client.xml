@@ -16,6 +16,7 @@
 
     <bean id="clientConfig" class="com.rchen.xrrpc.config.ClientConfig">
         <property name="verifyCode" value="${rpc.verification_code}"/>
+        <property name="rpcMaxTimeout" value="${rpc.max_timeout}" />
     </bean>
 
 </beans>

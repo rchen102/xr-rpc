@@ -2,7 +2,9 @@ package com.rchen.demo.client;
 
 import com.rchen.xrrpc.client.RpcClient;
 import com.rchen.xrrpc.demo.api.service.HelloService;
+import com.rchen.xrrpc.demo.api.service.StudentService;
 import com.rchen.xrrpc.exception.RpcFailureException;
+import com.rchen.xrrpc.exception.RpcTimeoutException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +29,37 @@ public class ClientTest {
      */
     @Test
     public void testRpc() {
-        HelloService helloService = rpcClient.createProxy(HelloService.class, "1.0");
-        System.out.println("执行结果: " + helloService.sayHello());
-        // 关闭客户端
-        rpcClient.close();
+        try {
+            HelloService helloService = rpcClient.createProxy(HelloService.class, "1.0");
+            System.out.println("执行结果: " + helloService.sayHello());
+
+            StudentService stuService = rpcClient.createProxy(StudentService.class, "1.0");
+            System.out.println("执行结果: " + stuService.findById("0076"));
+        } finally {
+            // 关闭客户端
+            rpcClient.close();
+        }
     }
 
     /**
-     * 测试出现错误的 RPC 调用
+     * 测试 RPC 调用超时
+     */
+    @Test
+    public void testRpcTimeout() {
+        try {
+            HelloService helloService = rpcClient.createProxy(HelloService.class, "1.0");
+            System.out.println("执行结果: " + helloService.sayHelloLater());
+        } catch (RpcTimeoutException timeout) {
+            timeout.printStackTrace();
+        }
+        finally {
+            // 关闭客户端
+            rpcClient.close();
+        }
+    }
+
+    /**
+     * 测试 RPC执行失败，出现 Exception
      */
     @Test
     public void testRpcWithException() {
@@ -42,7 +67,6 @@ public class ClientTest {
             HelloService helloService = rpcClient.createProxy(HelloService.class, "2.0");
             System.out.println("执行结果: " + helloService.sayHello());
         } catch (RpcFailureException rpc) {
-            System.out.println("RPC 调用失败");
             rpc.printStackTrace();
         } finally {
             rpcClient.close();
