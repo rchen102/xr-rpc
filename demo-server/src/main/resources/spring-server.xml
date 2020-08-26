@@ -8,17 +8,19 @@
 
     <context:component-scan base-package="com.rchen.xrrpc.demo.server" />
 
+    <!-- service registry  -->
     <bean id="serviceRegistry" class="com.rchen.xrrpc.registry.impl.ZookeeperServiceRegistry" >
         <constructor-arg name="zkAddress" value="${rpc.registry_address}" />
     </bean>
 
+    <!-- RPC Server  -->
     <bean id="rpcServer" class="com.rchen.xrrpc.server.RpcServer">
         <constructor-arg name="serviceAddress" value="${rpc.service_address}"/>
         <constructor-arg name="serviceRegistry" ref="serviceRegistry" />
     </bean>
 
+    <!-- Server Config  -->
     <bean id="serverConfig" class="com.rchen.xrrpc.config.ServerConfig" >
         <property name="verifyCode" value="${rpc.verification_code}" />
     </bean>
-
 </beans>
