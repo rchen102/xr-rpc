@@ -1,5 +1,6 @@
 package com.rchen.xrrpc.client;
 
+import com.rchen.xrrpc.client.manage.ClientManager;
 import com.rchen.xrrpc.client.proxy.AsyncRpcProxy;
 import com.rchen.xrrpc.client.proxy.RpcProxy;
 import com.rchen.xrrpc.registry.ServiceDiscovery;
@@ -46,7 +47,7 @@ public class RpcClient {
 
     public void close() {
         log.info("RPC 客户端准备关闭...");
+        serviceDiscovery.close();
         ClientManager.getInstance().close();
     }
-
 }

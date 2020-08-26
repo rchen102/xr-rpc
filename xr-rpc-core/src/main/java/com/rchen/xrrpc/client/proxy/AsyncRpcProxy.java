@@ -1,9 +1,7 @@
 package com.rchen.xrrpc.client.proxy;
 
-import com.rchen.xrrpc.client.AsyncRpcCallback;
-import com.rchen.xrrpc.client.ClientManager;
-import com.rchen.xrrpc.client.RpcFuture;
 import com.rchen.xrrpc.client.TransportClient;
+import com.rchen.xrrpc.client.manage.ClientUtil;
 import com.rchen.xrrpc.protocol.request.RpcRequest;
 import com.rchen.xrrpc.registry.ServiceDiscovery;
 import com.rchen.xrrpc.util.IdUtil;
@@ -37,25 +35,30 @@ public class AsyncRpcProxy<T> {
     public RpcFuture call(String method,
                           AsyncRpcCallback callback,
                           Object...params) {
-        RpcRequest rpcRequest = RpcRequest.builder()
-                .requestId(String.valueOf(IdUtil.nextId()))
-                .serviceName(serviceAPI.getName() + "-" + serviceVersion)
-                .methodName(method)
-                .params(params)
-                .build();
-        Class<?>[] paramsTypes = new Class[params.length];
-        for (int i = 0; i < params.length; i++) {
-            paramsTypes[i] = ReflectionUtil.getClassType(params[i]);
-        }
-        rpcRequest.setParamsType(paramsTypes);
-
-        String serviceAddress = serviceDiscovery.discover("");
-        transportClient = ClientManager.getInstance().getClient(serviceAddress);
+        // 1. 获取可用的服务连接
+        String serviceName = serviceAPI.getName() + "-" + serviceVersion;
+        log.info("执行 RPC 异步请求，准备获取服务 [{}] 地址...", serviceName);
+        transportClient = ClientUtil.getAvailableClient(serviceDiscovery, serviceName);
+        // 2. 调用服务
         if (transportClient != null) {
+            RpcRequest rpcRequest = RpcRequest.builder()
+                    .requestId(String.valueOf(IdUtil.nextId()))
+                    .serviceName(serviceAPI.getName() + "-" + serviceVersion)
+                    .methodName(method)
+                    .params(params)
+                    .build();
+            /**
+             * 基本类型转换
+             */
+            Class<?>[] paramsTypes = new Class[params.length];
+            for (int i = 0; i < params.length; i++) {
+                paramsTypes[i] = ReflectionUtil.getClassType(params[i]);
+            }
+            rpcRequest.setParamsType(paramsTypes);
             RpcFuture rpcFuture = transportClient.sendAsyncRequest(rpcRequest, callback);
             return rpcFuture;
         }
-        log.error("错误：获取可用的服务端连接失败");
+        log.error("无法获得服务 [{}] 的一个可用连接，调用失败!", serviceName);
         return null;
     }
 }

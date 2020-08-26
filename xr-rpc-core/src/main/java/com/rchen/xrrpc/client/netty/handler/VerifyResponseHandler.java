@@ -36,10 +36,9 @@ public class VerifyResponseHandler extends SimpleChannelInboundHandler<VerifyRes
     protected void channelRead0(ChannelHandlerContext ctx, VerifyResponse verifyResponse) throws Exception {
         if (verifyResponse.isSuccess()) {
             log.info("身份校验通过");
-            client.setRunning(true);
+            client.setAvailable(true);
         } else {
             log.error("身份校验失败: {}", verifyResponse.getErrorMsg());
-            client.setRunning(false);
         }
         client.getCountDownLatch().countDown();
     }

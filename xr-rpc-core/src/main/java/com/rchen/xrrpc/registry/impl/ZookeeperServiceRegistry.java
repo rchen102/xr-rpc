@@ -4,12 +4,15 @@ import com.rchen.xrrpc.registry.ServiceRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 
+import java.io.Closeable;
+import java.io.IOException;
+
 /**
  * @Author : crz
  * @Date: 2020/8/25
  */
 @Slf4j
-public class ZookeeperServiceRegistry implements ServiceRegistry {
+public class ZookeeperServiceRegistry implements ServiceRegistry, Closeable {
 
     /**
      * Zookeeper 客户端
@@ -42,6 +45,13 @@ public class ZookeeperServiceRegistry implements ServiceRegistry {
         if (!zkClient.exists(addressPath)) {
             zkClient.createEphemeralSequential(addressPath, serviceAddress);
             log.debug("创建 address 节点: {}", addressPath);
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (zkClient != null) {
+            zkClient.close();
         }
     }
 }

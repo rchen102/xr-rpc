@@ -1,6 +1,6 @@
 package com.rchen.xrrpc.client.netty.handler;
 
-import com.rchen.xrrpc.client.RpcFuture;
+import com.rchen.xrrpc.client.proxy.RpcFuture;
 import com.rchen.xrrpc.protocol.response.RpcResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

@@ -1,4 +1,4 @@
-package com.rchen.xrrpc.client;
+package com.rchen.xrrpc.client.proxy;
 
 /**
  * @Author : crz

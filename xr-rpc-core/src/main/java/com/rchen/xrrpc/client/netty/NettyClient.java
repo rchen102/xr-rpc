@@ -1,7 +1,8 @@
 package com.rchen.xrrpc.client.netty;
 
-import com.rchen.xrrpc.client.AsyncRpcCallback;
-import com.rchen.xrrpc.client.RpcFuture;
+import com.rchen.xrrpc.client.proxy.AsyncRpcCallback;
+import com.rchen.xrrpc.client.manage.ClientManager;
+import com.rchen.xrrpc.client.proxy.RpcFuture;
 import com.rchen.xrrpc.client.TransportClient;
 import com.rchen.xrrpc.client.netty.handler.RpcResponseHandler;
 import com.rchen.xrrpc.client.netty.handler.VerifyResponseHandler;
@@ -55,12 +56,23 @@ public class NettyClient implements TransportClient {
      * 用于确保连接在 RPC 调用前先建立
      */
     private CountDownLatch countDownLatch;
-    private boolean isRunning;
+
+    /**
+     * 连接是否可用
+     * 区分：连接建立 是 连接可用的 前提条件
+     */
+    private boolean isAvailable;
+
+    /**
+     * 连接是否建立
+     */
+    private boolean isConnected;
 
     public NettyClient(String ip, int port) {
         this.ip = ip;
         this.port = port;
-        countDownLatch = new CountDownLatch(2);
+        isConnected = false;
+        isAvailable = false;
         this.establishConnection();
     }
 
@@ -88,10 +100,11 @@ public class NettyClient implements TransportClient {
         connect(bootstrap, MAX_RETRY);
         try {
             /**
-             * 主线程阻塞，等待条件：
-             *  1. 连接建立完成
-             *  2. 身份验证结果
+             * 主线程阻塞，等待条件判断
+             *  1. 连接是否建立
+             *  2. 身份验证是否通过
              */
+            countDownLatch = new CountDownLatch(2);
             countDownLatch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -104,31 +117,30 @@ public class NettyClient implements TransportClient {
      * @param retry 剩余重连次数
      */
     private void connect(Bootstrap bootstrap, int retry) {
-        log.info("开始与服务端 [{}:{}] 建立新连接...", ip, port);
-        try {
-            bootstrap.connect(ip, port).addListener(future -> {
-                if (future.isSuccess()) {
-                    log.info("连接 [{}:{}] 建立成功！", ip, port);
-                    channel = ((ChannelFuture) future).channel();
-                    /**
-                     * 连接建立后取消主线程阻塞
-                     */
-                    countDownLatch.countDown();
-                } else if (retry == 0) {
-                    log.error("重试次数已用完，放弃连接！");
-                    System.exit(1);
-                } else {
-                    // 第几次重连
-                    int order = (MAX_RETRY - retry) + 1;
-                    // 本次重连的间隔
-                    int delay = 1 << order;
-                    log.error("连接失败，第 {} 次重连……", order);
-                    bootstrap.config().group().schedule(() -> connect(bootstrap,retry - 1), delay, TimeUnit
-                            .SECONDS);
-                }
-            });
-        } catch (Exception e) {
-        }
+        log.info("尝试与服务地址 [{}:{}] 建立连接...", ip, port);
+        bootstrap.connect(ip, port).addListener(future -> {
+            if (future.isSuccess()) {
+                // 连接通道建立后，主线程满足条件之一
+                log.info("连接 [{}:{}] 建立成功！", ip, port);
+                isConnected = true;
+                countDownLatch.countDown();
+                // 初始化通道，同时开始身份验证
+                channel = ((ChannelFuture) future).channel();
+            } else if (retry == 0) {
+                // 通道未建立，则默认身份验证也失败
+                log.error("重试次数已用完，放弃连接！");
+                countDownLatch.countDown();
+                countDownLatch.countDown();
+            } else {
+                // 第几次重连
+                int order = (MAX_RETRY - retry) + 1;
+                // 本次重连的间隔
+                int delay = 1 << order;
+                log.error("连接失败，第 {} 次重连……", order);
+                bootstrap.config().group().schedule(() -> connect(bootstrap, retry - 1), delay, TimeUnit
+                        .SECONDS);
+            }
+        });
     }
 
     @Override
@@ -158,12 +170,16 @@ public class NettyClient implements TransportClient {
     }
 
     @Override
-    public void close() {
+    public void close(ClientManager manager) {
         workerGroup.shutdownGracefully().addListener(future -> {
             if (future.isSuccess()) {
-                log.info("与服务端 [{}:{}] 的一条连接断开！", ip, port);
+                if (isConnected == true) {
+                    log.info("与服务端 [{}:{}] 的连接断开成功！", ip, port);
+                }
+                manager.doneClose();
             } else {
-                log.error("与服务端 [{}:{}] 的一条连接断开失败！", ip, port);
+                log.error("与服务端 [{}:{}] 的连接断开失败！", ip, port);
+                manager.doneClose();
             }
         });
     }

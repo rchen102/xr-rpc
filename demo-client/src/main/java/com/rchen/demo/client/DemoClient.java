@@ -18,8 +18,8 @@ public class DemoClient {
             HelloService helloService = rpcClient.createProxy(HelloService.class, "1.0");
             System.out.println("结果： " + helloService.sayHello());
 
-            HelloService helloService2 = rpcClient.createProxy(HelloService.class, "2.0");
-            System.out.println("结果： " + helloService2.sayHello());
+//            HelloService helloService2 = rpcClient.createProxy(HelloService.class, "2.0");
+//            System.out.println("结果： " + helloService2.sayHello());
         } finally {
             rpcClient.close();
         }

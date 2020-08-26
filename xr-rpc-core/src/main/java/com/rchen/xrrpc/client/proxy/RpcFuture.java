@@ -1,4 +1,4 @@
-package com.rchen.xrrpc.client;
+package com.rchen.xrrpc.client.proxy;
 
 import com.rchen.xrrpc.exception.RpcFailureException;
 import com.rchen.xrrpc.protocol.response.RpcResponse;
@@ -50,7 +50,7 @@ public class RpcFuture implements Future<Object> {
         response = res;
         countDownLatch.countDown();
 
-        // 异步调用处理
+        // 异步回调
         if (callback != null) {
             if (response.isSuccess()) {
                 callback.success(response.getResult());
@@ -87,7 +87,7 @@ public class RpcFuture implements Future<Object> {
             /**
              * 调用失败
              */
-            throw new RpcFailureException(response.getException());
+            throw new RpcFailureException(response.getException().getCause());
         }
     }
 
