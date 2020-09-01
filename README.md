@@ -9,6 +9,15 @@ A Light-weight distributed RPC Framework.
 - SLF4J + Logback: logger
 - JUnit: unit test
 
+
+## Design
+
+<div align=center>
+
+<img src="/Design.png" style="zoom:30%">
+
+</div>
+
 ## How to Run
 
 ### Define Service (Interface)
