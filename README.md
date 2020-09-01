@@ -1,7 +1,7 @@
 # XR-RPC
 A Light-weight distributed RPC Framework.
 
-## Tach stack
+## Tech Stack
 - Java: JDK8
 - Spring: service scan, configure and manage Java objects
 - Netty: network framework for development of high performance servers and clients
@@ -9,7 +9,7 @@ A Light-weight distributed RPC Framework.
 - SLF4J + Logback: logger
 - JUnit: unit test
 
-## How to run
+## How to Run
 
 ### Define Service (Interface)
 
