@@ -70,7 +70,6 @@ public class NettyServer implements TransportServer {
                     log.error("端口 [{}] 绑定失败!", port);
                 }
             });
-            // TODO 服务注册
             // 关闭 Netty 服务器
             f.channel().closeFuture().sync();
         } catch (InterruptedException e) {
